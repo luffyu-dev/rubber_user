@@ -1,0 +1,13 @@
+package com.rubber.user.web.starter;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class RubberUserWebStarterApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

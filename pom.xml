@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.rubber</groupId>
+        <artifactId>rubber_base_components</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.rubber.user</groupId>
+    <artifactId>rubber_user</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>rubber_user_service</module>
+        <module>rubber_user_dao</module>
+        <module>rubber_user_api</module>
+        <module>rubber_user_manager</module>
+        <module>rubber_user_web_starter</module>
+    </modules>
+
+    <properties>
+        <rubber.user.version>1.0-SNAPSHOT</rubber.user.version>
+    </properties>
+
+
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>com.rubber.user</groupId>
+                <artifactId>rubber_user_dao</artifactId>
+                <version>${rubber.user.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.rubber.user</groupId>
+                <artifactId>rubber_user_service</artifactId>
+                <version>${rubber.user.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.rubber.user</groupId>
+                <artifactId>rubber_user_manager</artifactId>
+                <version>${rubber.user.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.rubber.user</groupId>
+                <artifactId>rubber_user_api</artifactId>
+                <version>${rubber.user.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>

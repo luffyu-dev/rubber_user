@@ -1,0 +1,16 @@
+server:
+  port: 38001
+
+spring:
+  application:
+    name: rubber-user
+  cloud:
+    nacos:
+      config:
+        file-extension: yml
+
+rubber:
+  proxy:
+    set:
+      dbInstance: userDb
+
