@@ -29,6 +29,12 @@
             <artifactId>rubber_user_manager</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.rubber</groupId>
+            <artifactId>base_redis</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

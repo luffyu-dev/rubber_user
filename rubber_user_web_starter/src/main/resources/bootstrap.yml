@@ -12,5 +12,18 @@ spring:
 rubber:
   proxy:
     set:
-      dbInstance: userDb
+      dbInstance: userInstance
+    config:
+      table-config:
+        - logicTableName: t_user_basic_info
+          ruleType: TEN_DB_TEN_TABLE_USER
+          dbName: user_db
+          shardingColumn: uid
+          tableNum: 10
+        - logicTableName: t_global_uid_generator
+          ruleType: SINGLE_DB_SINGLE_TABLE
+          dbName: user_db
+        - logicTableName: t_user_account_info
+          ruleType: SINGLE_DB_SINGLE_TABLE
+          dbName: user_db
 
