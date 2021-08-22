@@ -33,6 +33,10 @@
 
 	</dependencies>
 
+	<build>
+		<finalName>rubber-user-web</finalName>
+	</build>
+
 
 
 </project>
