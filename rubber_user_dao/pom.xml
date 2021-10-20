@@ -17,11 +17,6 @@
             <artifactId>base_mysql</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.rubber</groupId>
-            <artifactId>base_config</artifactId>
-        </dependency>
-
     </dependencies>
 
 

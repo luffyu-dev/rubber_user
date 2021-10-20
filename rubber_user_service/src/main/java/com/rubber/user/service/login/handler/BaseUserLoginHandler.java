@@ -1,9 +1,9 @@
 package com.rubber.user.service.login.handler;
 
-import com.rubber.user.api.service.dto.UserAccountInfoDto;
+import com.rubber.user.api.service.request.UserLoginRequest;
 import com.rubber.user.api.service.response.UserInfoResponse;
-import com.rubber.user.service.constant.ErrCodeEnums;
-import com.rubber.user.service.exception.UserLoginException;
+import com.rubber.user.api.service.response.UserLoginResponse;
+import com.rubber.user.dao.entity.UserAccountInfo;
 import com.rubber.user.service.info.logic.QueryUserInfoLogic;
 import com.rubber.user.service.login.bean.UserLoginBean;
 
@@ -18,66 +18,58 @@ public abstract class BaseUserLoginHandler implements UserLoginHandler {
     @Resource
     private QueryUserInfoLogic queryUserInfoLogic;
 
-
     /**
-     * 验证码校验
+     * 查询账户信息
+     * @param userAccountInfoDto
+     * @return
      */
-    public abstract void doCheckCipher(UserAccountInfoDto userAccountInfoDto);
-
-
+    public abstract UserAccountInfo getBdUserAccount(UserLoginRequest userAccountInfoDto);
 
     /**
      * 登录操作
      */
-    public abstract UserLoginBean doLogin(UserAccountInfoDto userAccountInfoDto);
+    public abstract UserLoginResponse doLogin(UserAccountInfo accountInfo, UserLoginRequest accountInfoDto);
 
+
+    /**
+     * 注册操作
+     */
+    public abstract UserLoginResponse doRegister(UserLoginRequest userAccountInfoDto);
 
     /**
      * 登录接口
      *
-     * @param userAccountInfoDto 当前的账户信息
+     * @param request 当前的账户信息
      * @return 返回登录之后的信息
      */
     @Override
-    public UserInfoResponse login(UserAccountInfoDto userAccountInfoDto) {
+    public UserLoginResponse login(UserLoginRequest request) {
         //登录的前置操作
-        doPreLogin(userAccountInfoDto);
-        UserLoginBean userLoginBean = doLogin(userAccountInfoDto);
-        if (userLoginBean != null && userLoginBean.getUid() != null){
-            doPostLoginSuccess(userLoginBean.getUid(),userAccountInfoDto);
-            return queryUserInfoLogic.getUserInfoByUid(userLoginBean.getUid());
+        doVerifyRequest(request);
+        UserAccountInfo accountInfo = getBdUserAccount(request);
+        UserLoginResponse loginBean ;
+        if (accountInfo == null){
+            loginBean = doRegister(request);
         }else {
-            if (userLoginBean == null){
-                userLoginBean = new UserLoginBean();
-            }
-            doPostLoginFail(userLoginBean,userAccountInfoDto);
-            return new UserInfoResponse();
+            loginBean = doLogin(accountInfo,request);
         }
+        doPostLoginSuccess(accountInfo,loginBean);
+        return loginBean;
     }
 
 
-    /**
-     * 登录之前的前置操作
-     * @param userAccountInfoDto 验证登录密码
-     */
-    private void doPreLogin(UserAccountInfoDto userAccountInfoDto){
-        doCheckCipher(userAccountInfoDto);
+    private void doVerifyRequest(UserLoginRequest dto){
+
     }
+
 
 
     /**
      * 登录成功之后的操作
      */
-    private void doPostLoginSuccess(Integer uid,UserAccountInfoDto userAccountInfoDto){
-
+    private void doPostLoginSuccess(UserAccountInfo accountInfo,UserLoginResponse loginBean){
     }
 
-    /**
-     * 登录失败之后的操作
-     */
-    private void doPostLoginFail(UserLoginBean userLoginBean,UserAccountInfoDto userAccountInfoDto){
-        throw new UserLoginException(userLoginBean.getErrCode() == null ? ErrCodeEnums.ACCOUNT_NOT_FOUNT : userLoginBean.getErrCode());
-    }
 
 
 }

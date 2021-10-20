@@ -14,16 +14,34 @@ rubber:
     set:
       dbInstance: userInstance
     config:
-      table-config:
-        - logicTableName: t_user_basic_info
-          ruleType: TEN_DB_TEN_TABLE_USER
-          dbName: user_db
-          shardingColumn: uid
-          tableNum: 10
-        - logicTableName: t_global_uid_generator
-          ruleType: SINGLE_DB_SINGLE_TABLE
-          dbName: user_db
-        - logicTableName: t_user_account_info
-          ruleType: SINGLE_DB_SINGLE_TABLE
-          dbName: user_db
+      dbInstances:
+        userInstance:
+          instanceName: userInstance
+          type: SINGLE
+          config:
+            type: com.alibaba.druid.pool.DruidDataSource
+            platform: mysql
+            initialSize: 5
+            minIdle: 5
+            maxIdle: 5
+            maxActive: 50
+            maxWait: 60000
+            timeBetweenEvictionRunsMillis: 60000
+            minEvictableIdleTimeMillis: 300000
+            validationQuery: SELECT 1 FROM DUAL
+            testWhileIdle: true
+            testOnBorrow: true
+            testOnReturn: true
+            poolPreparedStatements: true
+            maxPoolPreparedStatementPerConnectionSize: 20
+            # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+            filters: stat,wall,log4j
+            # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+            connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+          connects:
+            - url: jdbc:mysql://127.0.0.1:3306/user_db?useUnicode=true;characterEncoding=utf-8
+              username: root
+              password: root
+              driverClassName: com.mysql.cj.jdbc.Driver
+              dbName: user_db
 

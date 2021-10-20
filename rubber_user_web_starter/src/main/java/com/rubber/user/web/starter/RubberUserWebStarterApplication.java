@@ -10,6 +10,12 @@ import org.springframework.context.annotation.ComponentScan;
 @MapperScan("com.rubber.user.dao.mapper")
 public class RubberUserWebStarterApplication {
 
+
+	static {
+		System.setProperty("druid.mysql.usePingMethod","false");
+	}
+
+
 	public static void main(String[] args) {
 		SpringApplication.run(RubberUserWebStarterApplication.class, args);
 	}

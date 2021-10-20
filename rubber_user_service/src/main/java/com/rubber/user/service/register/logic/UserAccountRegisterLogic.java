@@ -2,6 +2,7 @@ package com.rubber.user.service.register.logic;
 
 import cn.hutool.core.util.StrUtil;
 import com.rubber.user.api.service.dto.UserRegisterInfoDto;
+import com.rubber.user.api.service.request.UserLoginRequest;
 import com.rubber.user.api.service.response.UserInfoResponse;
 import com.rubber.user.dao.constant.UserLoginType;
 import com.rubber.user.dao.constant.UserStatusEnums;
@@ -52,6 +53,7 @@ public class UserAccountRegisterLogic  {
     @Transactional(
             rollbackFor = Throwable.class
     )
+    @Deprecated
     public UserInfoResponse addUser(UserRegisterInfoDto userRegisterInfoDto) {
         //验证基本的数据信息
         verifyRequestParam(userRegisterInfoDto);
@@ -68,11 +70,31 @@ public class UserAccountRegisterLogic  {
         return queryUserInfoLogic.getUserInfoByUid(accountInfo.getUid());
     }
 
+
+
+    @Transactional(
+            rollbackFor = Throwable.class
+    )
+    public UserAccountInfo register(UserLoginRequest loginRequest) {
+        //验证基本的数据信息
+        verifyRequestParam(loginRequest);
+        //逻辑验证
+        verifyLogicData(loginRequest);
+        //初始化账户
+        UserAccountInfo accountInfo = initRegisterAccount(loginRequest);
+        if (userAccountInfoLogic.addUserAccount(accountInfo)){
+            //初始化用户基础信息
+           return accountInfo;
+        }
+        //保存成功之后的操作
+        return null;
+    }
+
     /**
      * 必要的参数验证
      */
-    private void verifyRequestParam(UserRegisterInfoDto userRegisterInfoDto){
-        if (StrUtil.isEmpty(userRegisterInfoDto.getUserAccount()) || StrUtil.isEmpty(userRegisterInfoDto.getAccountPwd())){
+    private void verifyRequestParam(UserLoginRequest loginRequest){
+        if (StrUtil.isEmpty(loginRequest.getUserAccount()) || StrUtil.isEmpty(loginRequest.getAccountPwd())){
             log.error("注册的时候用户账户和密码异常");
             throw new UserRegisterException(ErrCodeEnums.PARAM_ERROR);
         }
@@ -82,8 +104,8 @@ public class UserAccountRegisterLogic  {
     /**
      * 逻辑数据验证
      */
-    private void verifyLogicData(UserRegisterInfoDto userRegisterInfoDto){
-        Integer uid = userAccountInfoLogic.getUidByAccount(userRegisterInfoDto.getUserAccount());
+    private void verifyLogicData(UserLoginRequest loginRequest){
+        Integer uid = userAccountInfoLogic.getUidByAccount(loginRequest.getUserAccount());
         if (uid != null) {
             //表示账户已经存在
             throw new UserRegisterException(ErrCodeEnums.REGISTER_USER_EXIST);
@@ -93,7 +115,7 @@ public class UserAccountRegisterLogic  {
     /**
      * 初始化注册的对象
      */
-    private UserAccountInfo initRegisterAccount(UserRegisterInfoDto userRegisterInfoDto){
+    private UserAccountInfo initRegisterAccount(UserLoginRequest userRegisterInfoDto){
         UserAccountInfo userAccountInfo = new UserAccountInfo();
         BeanUtils.copyProperties(userRegisterInfoDto,userAccountInfo);
         userAccountInfo.setUserSalt(iEncryptHandler.createSalt(6));

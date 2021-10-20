@@ -1,12 +1,15 @@
 package com.rubber.user.service.login.handler;
 
 import cn.hutool.core.util.StrUtil;
-import com.rubber.user.api.service.dto.UserAccountInfoDto;
+import com.rubber.user.api.service.request.UserLoginRequest;
+import com.rubber.user.api.service.response.UserLoginResponse;
 import com.rubber.user.dao.entity.UserAccountInfo;
 import com.rubber.user.dao.logic.UserAccountInfoLogic;
 import com.rubber.user.service.constant.ErrCodeEnums;
 import com.rubber.user.service.encrypt.IEncryptHandler;
+import com.rubber.user.service.exception.UserRegisterException;
 import com.rubber.user.service.login.bean.UserLoginBean;
+import com.rubber.user.service.register.logic.UserAccountRegisterLogic;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -27,41 +30,50 @@ public class UserAccountLoginHandler extends BaseUserLoginHandler {
     @Resource(name = "encryptProvider")
     private IEncryptHandler iEncryptHandler;
 
+    @Resource
+    private UserAccountRegisterLogic userAccountRegisterLogic;
+
+    /**
+     * 查询账户信息
+     *
+     * @param userAccountInfoDto
+     * @return
+     */
+    @Override
+    public UserAccountInfo getBdUserAccount(UserLoginRequest userAccountInfoDto) {
+        return userAccountInfoLogic.getInfoByAccount(userAccountInfoDto.getUserAccount());
+    }
 
     /**
      * 登录操作
      *
      */
     @Override
-    public UserLoginBean doLogin(UserAccountInfoDto userAccountInfoDto) {
-        UserLoginBean userLoginBean = new UserLoginBean();
-        if(!verifyRequestParam(userLoginBean,userAccountInfoDto)){
-            return userLoginBean;
+    public UserLoginResponse doLogin(UserAccountInfo accountInfo, UserLoginRequest userAccountInfoDto) {
+        UserLoginResponse userLoginResponse = new UserLoginResponse();
+        boolean result = iEncryptHandler.matches(userAccountInfoDto.getAccountPwd(),accountInfo.getUserSalt(),accountInfo.getUserPassword());
+        if (!result){
+            throw new UserRegisterException(ErrCodeEnums.PWD_IS_ERROR);
         }
-        UserAccountInfo userAccountInfo = userAccountInfoLogic.getInfoByAccount(userAccountInfoDto.getUserAccount());
-        if (userAccountInfo == null){
-            userLoginBean.setErrCode(ErrCodeEnums.ACCOUNT_NOT_FOUNT);
-            return userLoginBean;
-        }
-        if(!verifyLogicData(userLoginBean,userAccountInfo,userAccountInfoDto)){
-            return userLoginBean;
-        }
-        userLoginBean.setUid(userAccountInfo.getUid());
-        return userLoginBean;
+        userLoginResponse.setUid(accountInfo.getUid());
+        return userLoginResponse;
     }
 
     /**
-     * 验证码校验
+     * 注册操作
      *
-     * @param userAccountInfoDto
+     * @param request
      */
     @Override
-    public void doCheckCipher(UserAccountInfoDto userAccountInfoDto) {
-
+    public UserLoginResponse doRegister(UserLoginRequest request) {
+        UserAccountInfo register = userAccountRegisterLogic.register(request);
+        if (register == null){
+            throw new UserRegisterException(ErrCodeEnums.REGISTER_ERROR);
+        }
+        UserLoginResponse userLoginResponse = new UserLoginResponse();
+        userLoginResponse.setUid(register.getUid());
+        return userLoginResponse;
     }
-
-
-
 
 
 
@@ -69,7 +81,7 @@ public class UserAccountLoginHandler extends BaseUserLoginHandler {
     /**
      * 必要的参数验证
      */
-    private boolean verifyRequestParam(UserLoginBean userLoginBean,UserAccountInfoDto userAccountInfoDto){
+    private boolean verifyRequestParam(UserLoginBean userLoginBean, UserLoginRequest userAccountInfoDto){
         if (StrUtil.isEmpty(userAccountInfoDto.getUserAccount()) || StrUtil.isEmpty(userAccountInfoDto.getAccountPwd())){
             log.error("账户信息不能为空");
             userLoginBean.setErrCode(ErrCodeEnums.PARAM_ERROR);
@@ -78,15 +90,5 @@ public class UserAccountLoginHandler extends BaseUserLoginHandler {
         return true;
     }
 
-    /**
-     * 逻辑数据验证
-     */
-    private boolean verifyLogicData(UserLoginBean userLoginBean,UserAccountInfo userAccountInfo,UserAccountInfoDto userAccountInfoDto){
-        boolean result = iEncryptHandler.matches(userAccountInfoDto.getAccountPwd(),userAccountInfo.getUserSalt(),userAccountInfo.getUserPassword());
-        if (!result){
-            userLoginBean.setErrCode(ErrCodeEnums.PWD_IS_ERROR);
-            return false;
-        }
-        return true;
-    }
+
 }

@@ -1,7 +1,7 @@
 package com.rubber.user.service.login.logic;
 
 import cn.hutool.core.util.StrUtil;
-import com.rubber.user.api.service.dto.UserAccountInfoDto;
+import com.rubber.user.api.service.request.UserLoginRequest;
 import com.rubber.user.dao.entity.UserAccountInfo;
 import com.rubber.user.dao.logic.UserAccountInfoLogic;
 import com.rubber.user.service.constant.ErrCodeEnums;
@@ -34,7 +34,7 @@ public class UserAccountLoginLogic {
      * @param userAccountInfoDto 当前的账户信息
      * @return 返回
      */
-    public Integer loginByAccount(UserAccountInfoDto userAccountInfoDto){
+    public Integer loginByAccount(UserLoginRequest userAccountInfoDto){
         //基础参数验证
         verifyRequestParam(userAccountInfoDto);
 
@@ -51,7 +51,7 @@ public class UserAccountLoginLogic {
     /**
      * 必要的参数验证
      */
-    private void verifyRequestParam(UserAccountInfoDto userAccountInfoDto){
+    private void verifyRequestParam(UserLoginRequest userAccountInfoDto){
         if (StrUtil.isEmpty(userAccountInfoDto.getUserAccount()) || StrUtil.isEmpty(userAccountInfoDto.getAccountPwd())){
             log.error("账户信息不能为空");
             throw new UserRegisterException(ErrCodeEnums.PARAM_ERROR);
@@ -61,7 +61,7 @@ public class UserAccountLoginLogic {
     /**
      * 逻辑数据验证
      */
-    private void verifyLogicData(UserAccountInfo userAccountInfo,UserAccountInfoDto userAccountInfoDto){
+    private void verifyLogicData(UserAccountInfo userAccountInfo, UserLoginRequest userAccountInfoDto){
         boolean result = iEncryptHandler.matches(userAccountInfoDto.getAccountPwd(),userAccountInfo.getUserSalt(),userAccountInfo.getUserPassword());
         if (!result) {
             throw new UserRegisterException(ErrCodeEnums.PWD_IS_ERROR);

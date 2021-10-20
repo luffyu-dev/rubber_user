@@ -1,11 +1,12 @@
-package com.rubber.user.web.starter.controller;
+package com.rubber.user.service.controller;
 
 import com.rubber.common.utils.result.ResultMsg;
 import com.rubber.user.api.service.UserLoginService;
 import com.rubber.user.api.service.UserRegisterService;
-import com.rubber.user.api.service.dto.UserAccountInfoDto;
+import com.rubber.user.api.service.request.UserLoginRequest;
 import com.rubber.user.api.service.dto.UserRegisterInfoDto;
 import com.rubber.user.api.service.response.UserInfoResponse;
+import com.rubber.user.api.service.response.UserLoginResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,8 +29,8 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResultMsg login(UserAccountInfoDto userAccountInfoDto){
-        UserInfoResponse userInfoResponse = userLoginService.login(userAccountInfoDto);
+    public ResultMsg login(UserLoginRequest request){
+        UserLoginResponse userInfoResponse = userLoginService.login(request);
         return ResultMsg.success(userInfoResponse);
     }
 

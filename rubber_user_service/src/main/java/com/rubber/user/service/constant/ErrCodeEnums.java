@@ -27,6 +27,7 @@ public enum  ErrCodeEnums implements ICodeHandle {
 
     ACCOUNT_NOT_FOUNT("3010200", "账户不存在"),
     PWD_IS_ERROR("3010201", "密码错误"),
+    REGISTER_ERROR("3010100", "注册失败"),
 
 
 

@@ -1,5 +1,6 @@
 package com.rubber.user.api.service.dto;
 
+import com.rubber.user.api.service.request.UserLoginRequest;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
  * Created on 2021/8/7
  */
 @Data
-public class UserRegisterInfoDto extends  UserAccountInfoDto{
+public class UserRegisterInfoDto extends UserLoginRequest {
 
     /**
      * 用户昵称
@@ -30,7 +31,6 @@ public class UserRegisterInfoDto extends  UserAccountInfoDto{
      * 0表示男 1表示女 2表示未知
      */
     private Integer userSex;
-
 
     /**
      * 生日
