@@ -7,7 +7,7 @@ import lombok.Data;
  * Created on 2021/8/7
  */
 @Data
-public class UserLoginRequest {
+public class UserLoginRequest extends UserSession{
 
     /**
      * 用户登录类型 0表示账号密码登录 1表示手机验短登录 2表示微信扫码登录
@@ -24,7 +24,6 @@ public class UserLoginRequest {
      */
     private String userPhone;
 
-
     /**
      * 第三方登录账户id
      */
@@ -34,7 +33,6 @@ public class UserLoginRequest {
      * 第三方登录账户相关密钥信息
      */
     private String thirdAccountKey;
-
 
     /**
      * 用户邮箱
@@ -52,11 +50,6 @@ public class UserLoginRequest {
      * 登录密钥
      */
     private String loginCipher;
-
-
-
-
-
 
 
 }

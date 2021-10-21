@@ -36,10 +36,22 @@
         </dependency>
 
 
-<!--        <dependency>-->
-<!--            <groupId>com.rubber</groupId>-->
-<!--            <artifactId>base_redis</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rubber</groupId>
+            <artifactId>base_redis</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.rubber</groupId>
+            <artifactId>base_utils</artifactId>
+        </dependency>
 
     </dependencies>
 

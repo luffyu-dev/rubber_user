@@ -24,5 +24,10 @@ public class UserSession {
      */
     private Integer uid;
 
+    /**
+     * 登录的ip
+     */
+    private String ip;
+
 
 }

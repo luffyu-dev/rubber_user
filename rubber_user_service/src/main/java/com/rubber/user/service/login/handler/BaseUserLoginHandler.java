@@ -1,13 +1,14 @@
 package com.rubber.user.service.login.handler;
 
+import com.rubber.user.api.service.UserSessionService;
 import com.rubber.user.api.service.request.UserLoginRequest;
-import com.rubber.user.api.service.response.UserInfoResponse;
 import com.rubber.user.api.service.response.UserLoginResponse;
+import com.rubber.user.dao.constant.UserStatusEnums;
 import com.rubber.user.dao.entity.UserAccountInfo;
-import com.rubber.user.service.info.logic.QueryUserInfoLogic;
-import com.rubber.user.service.login.bean.UserLoginBean;
+import com.rubber.user.service.constant.ErrCodeEnums;
+import com.rubber.user.service.exception.UserRegisterException;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 
 /**
  * @author luffyu
@@ -15,8 +16,10 @@ import javax.annotation.Resource;
  */
 public abstract class BaseUserLoginHandler implements UserLoginHandler {
 
-    @Resource
-    private QueryUserInfoLogic queryUserInfoLogic;
+
+    @Autowired
+    private UserSessionService userSessionService;
+
 
     /**
      * 查询账户信息
@@ -53,7 +56,7 @@ public abstract class BaseUserLoginHandler implements UserLoginHandler {
         }else {
             loginBean = doLogin(accountInfo,request);
         }
-        doPostLoginSuccess(accountInfo,loginBean);
+        doPostLoginSuccess(accountInfo,request,loginBean);
         return loginBean;
     }
 
@@ -67,7 +70,14 @@ public abstract class BaseUserLoginHandler implements UserLoginHandler {
     /**
      * 登录成功之后的操作
      */
-    private void doPostLoginSuccess(UserAccountInfo accountInfo,UserLoginResponse loginBean){
+    private void doPostLoginSuccess(UserAccountInfo accountInfo,UserLoginRequest request,UserLoginResponse response){
+        if (!UserStatusEnums.NORMAL.getUserStatus().equals(accountInfo.getUserStatus())){
+            throw new UserRegisterException(ErrCodeEnums.PWD_IS_ERROR);
+        }
+        request.setUid(accountInfo.getUid());
+        response.setUid(accountInfo.getUid());
+        String token = userSessionService.createSession(request);
+        response.setSessionKey(token);
     }
 
 

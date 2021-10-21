@@ -1,7 +1,7 @@
 package com.rubber.user.api.service;
 
+import com.rubber.common.utils.result.ResultMsg;
 import com.rubber.user.api.service.request.UserLoginRequest;
-import com.rubber.user.api.service.response.UserInfoResponse;
 import com.rubber.user.api.service.response.UserLoginResponse;
 
 /**

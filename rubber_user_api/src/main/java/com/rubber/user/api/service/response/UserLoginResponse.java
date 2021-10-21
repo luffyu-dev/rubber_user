@@ -9,18 +9,23 @@ import lombok.Data;
 @Data
 public class UserLoginResponse {
 
-    /**
-     * 登录成功的sessionId
-     */
-    private String sessionId;
 
     /**
-     * 登录成功的token
+     * 当前登录的uid
      */
-    private String token;
-
-
     private Integer uid;
+
+
+    /**
+     * 登录的账户
+     */
+    private String loginAccount;
+
+
+    /**
+     * sessionKey值
+     */
+    private String sessionKey;
 
 
 }
